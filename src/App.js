@@ -143,13 +143,18 @@ function Geolocate({ onUpdate }) {
 }
 
 const SUGGESTED_LOCATIONS = [
-  { position: [38.729, 20.761], name: "Blue Cove", description: "Calm waters, great for swimming", type: "Beach", difficulty: "Easy", duration: "2-3 hours" },
-  { position: [38.722, 20.748], name: "Fisherman Point", description: "Scenic spot, good for a quick stop", type: "Historic Site", difficulty: "Easy", duration: "1-2 hours" },
+  { position: [38.76418558916113, 20.789713587619833], name: "Vathiavali Beach", description: "Calm waters, great for swimming, has road access and beach bar, Alternative to Vathiavali.", type: "Beach", difficulty: "Easy", duration: "1-2 hours" },
+  { position: [38.75769808045438, 20.765195020459796], name: "Gerakas Beach", description: "Calm waters, great for swimming, no road access more private beach", type: "Beach", difficulty: "Easy", duration: "1-2 hours" },
+  { position: [38.68784768039136, 20.74100958886832], name: "Scorpios Island", description: "Private Island, only access to 1 beach, can be crowded.", type: "Beach", difficulty: "Easy", duration: "0.5-1 hour" },
+  { position: [38.6148442212325, 20.759276148506192], name: "Papanikolis Cave", description: ".", type: "Beach", difficulty: "Hard", duration: "10-20 Minutes" },
+  { position: [38.676316767313374, 20.72628328895621], name: "Lakka Beach", description: "Beautiful beach with blue waters, Not accessible by car, Only other boats will be there.", type: "Beach", difficulty: "Easy", duration: "1-2 hours" },
+  { position: [38.66113816734861, 20.743414135274847], name: "Ammoglossa Beach", description: "Accessible by car but not crowded, Very beautiful beach with a Beach bar if u want to relax.", type: "Beach", difficulty: "Easy", duration: "1-2 hours" },
+  { position: [38.665472594390145, 20.777818493575722], name: "Karnagio Restraurant", description: "Very nice Restaurant for lunch with the family, Also has a beach next to it.", type: "Beach", difficulty: "Easy", duration: "1-2 hours" },
 ];
 
 export default function BoatNavigation() {
   const [map, setMap] = useState(null);
-  const [showRect, setShowRect] = useState(true);
+
   const [currentTime, setCurrentTime] = useState(new Date());
   const [userPos, setUserPos] = useState(null);
   const [follow, setFollow] = useState(false);
@@ -165,7 +170,7 @@ export default function BoatNavigation() {
     setOutOfBounds(!pointInRect(userPos, ALLOWED_RECT));
   }, [userPos]);
 
-  // ---- NEW: limit panning to a padded box around the allowed rectangle ----
+
   const maxBounds = useMemo(() => padRectMeters(ALLOWED_RECT, DRAG_PAD_METERS), []);
 
   return (
@@ -198,7 +203,8 @@ export default function BoatNavigation() {
         <div style={{ position: 'relative', height: 'calc(100vh - 80px)' }}>
           <MapContainer
               center={MARINA_LOCATION}
-              zoom={13}
+              zoom={15}
+              minZoom={13}
               style={{ height: '100%', width: '100%' }}
               zoomControl={false}
               attributionControl={false}
@@ -207,7 +213,8 @@ export default function BoatNavigation() {
               maxBounds={maxBounds}
               maxBoundsViscosity={1.0}   // ← sticky bounds; can't drag past padding
           >
-            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+            <TileLayer url="https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless_3857/default/g/{z}/{y}/{x}.jpg" />
+
 
             {/* geolocation watcher */}
             <Geolocate onUpdate={setUserPos} />
@@ -223,12 +230,12 @@ export default function BoatNavigation() {
             </Marker>
 
             {/* allowed rectangle */}
-            {showRect && (
+
                 <Rectangle
                     bounds={ALLOWED_RECT}
                     pathOptions={{ color: '#06b6d4', weight: 2, opacity: 0.8, fillOpacity: 0.12 }}
                 />
-            )}
+
 
             {/* user position */}
             {userPos && (
@@ -258,9 +265,7 @@ export default function BoatNavigation() {
 
           {/* controls */}
           <div style={{ position: 'absolute', top: 16, left: 16, right: 16, zIndex: 1000, display: 'flex', justifyContent: 'space-between', gap: 8 }}>
-            <Button onClick={() => setShowRect(s => !s)} className="bg-white/90 border text-slate-900 shadow-lg" size="sm">
-              <Waves className="w-4 h-4" />&nbsp;{showRect ? 'Hide Area' : 'Show Area'}
-            </Button>
+
             {map && <FollowMe follow={follow} setFollow={setFollow} userPos={userPos} map={map} />}
           </div>
 
