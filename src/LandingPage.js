@@ -135,7 +135,7 @@ function LandingPage() {
                             </div>
                             <div className="flex items-center gap-8 pt-4 text-white">
                                 <div>
-                                    <div className="text-3xl font-bold">2,500+</div>
+                                    <div className="text-3xl font-bold">Hundreds Of</div>
                                     <div className="opacity-80">Happy Boaters</div>
                                 </div>
                                 <div className="w-px h-12 bg-white/50"></div>
@@ -233,7 +233,7 @@ function LandingPage() {
                             </div>
                             <h3 className="text-xl font-bold text-slate-900 mb-3">Open the App</h3>
                             <p className="text-slate-600">
-                                Launch Navigator on your phone and enter your access code to get started
+                                Launch Diavlos Navigator on your device.
                             </p>
                         </div>
                         <div className="text-center">
