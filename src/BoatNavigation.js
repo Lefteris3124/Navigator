@@ -237,7 +237,7 @@ const typeEmoji = (type) => {
 };
 
 export default function BoatNavigation() {
-    const [map, setMap] = useState(null);
+    const [setMap] = useState(null);
     const [currentTime, setCurrentTime] = useState(new Date());
     const [userPos, setUserPos] = useState(null);
     const [outOfBounds, setOutOfBounds] = useState(false);
@@ -291,7 +291,7 @@ export default function BoatNavigation() {
         setOutOfBounds(!pointInRect(userPos, ALLOWED_RECT));
     }, [userPos]);
 
-    // 📐 Stable heading based on GPS course (not compass)
+    //  Stable heading based on GPS course
     const courseHeading = useCourseHeading(userPos, {
         minMoveMeters: 2,      // only update if you moved at least 2m
         minIntervalMs: 500,    // only update every 0.5s

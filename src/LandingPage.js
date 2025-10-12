@@ -1,23 +1,86 @@
 import { Anchor, Navigation, Waves, MapPin, Clock, Shield, ChevronRight, Star } from 'lucide-react';
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+
 
 function LandingPage() {
+
+    const deferredPromptRef = useRef(null);
+    const [canInstall, setCanInstall] = useState(false);
+    const [isStandalone, setIsStandalone] = useState(false);
+
+    useEffect(() => {
+        const standalone =
+            window.matchMedia("(display-mode: standalone)").matches ||
+            window.navigator.standalone === true;
+        setIsStandalone(standalone);
+
+        const onBIP = (e) => {
+            e.preventDefault();
+            deferredPromptRef.current = e;
+            setCanInstall(true);
+        };
+        const onInstalled = () => {
+            setCanInstall(false);
+            setIsStandalone(true);
+            deferredPromptRef.current = null;
+        };
+
+        window.addEventListener("beforeinstallprompt", onBIP);
+        window.addEventListener("appinstalled", onInstalled);
+
+        return () => {
+            window.removeEventListener("beforeinstallprompt", onBIP);
+            window.removeEventListener("appinstalled", onInstalled);
+        };
+    }, []);
+
+    const handleInstallClick = async () => {
+        const promptEvent = deferredPromptRef.current;
+        if (!promptEvent) return;
+        promptEvent.prompt();
+        await promptEvent.userChoice;
+        deferredPromptRef.current = null;
+        setCanInstall(false);
+    };
+
+
     return (
         <div className="min-h-screen bg-gradient-to-b from-slate-50 to-blue-50">
             {/* Header */}
             <header className="fixed top-0 w-full bg-white/80 backdrop-blur-md z-50 border-b border-slate-200 transition-all duration-300">
-                <nav className="container mx-auto px-6 py-4 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                        <Anchor className="w-8 h-8 text-blue-600" />
-                        <span className="text-2xl font-bold text-slate-800">Diavlos Navigator</span>
+                <nav className="container mx-auto px-4 sm:px-6 py-4 grid grid-cols-1 gap-3 sm:flex sm:items-center sm:justify-between text-center sm:text-left">
+
+                    {/* Logo centered on mobile, left on desktop */}
+                    <div className="flex items-center justify-center sm:justify-start gap-2">
+                        <Anchor className="w-7 h-7 sm:w-8 sm:h-8 text-blue-600 flex-shrink-0" />
+                        <span className="text-xl sm:text-2xl font-bold text-slate-800">
+        Diavlos Navigator
+      </span>
                     </div>
-                    <div className="hidden md:flex items-center gap-8">
-                        <a href="#features" className="text-slate-600 hover:text-blue-600 transition-colors font-medium">Features</a>
-                        <a
-                            href="#how-it-works"
-                            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-full font-medium transition-all duration-300 hover:shadow-lg hover:scale-105"
-                        >
+
+                    {/* Buttons section */}
+                    <div
+                        className="
+        grid grid-cols-2 gap-3 justify-items-center
+        sm:flex sm:justify-end sm:gap-6
+      "
+                    >
+                        <a href="#features" className="cssbuttons-2">
+  <span>
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+    </svg>
+    Features
+  </span>
+                        </a>
+
+                        <a href="#how-it-works" className="cssbuttons-io-button text-sm sm:text-base">
                             Get Started
+                            <span className="icon">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+          </svg>
+        </span>
                         </a>
                     </div>
                 </nav>
@@ -59,6 +122,16 @@ function LandingPage() {
                                     Start Navigating
                                     <ChevronRight className="w-5 h-5" />
                                 </button>
+
+                                {canInstall && !isStandalone && (
+                                    <button
+                                        onClick={handleInstallClick}
+                                        className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:shadow-xl hover:scale-105 flex items-center justify-center gap-2"
+                                    >
+                                        📱 Install App
+                                        <ChevronRight className="w-5 h-5" />
+                                    </button>
+                                )}
                             </div>
                             <div className="flex items-center gap-8 pt-4 text-white">
                                 <div>
@@ -138,10 +211,21 @@ function LandingPage() {
                             <div className="w-16 h-16 bg-blue-600 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6 shadow-lg">
                                 1
                             </div>
-                            <h3 className="text-xl font-bold text-slate-900 mb-3">Rent Your Boat</h3>
-                            <p className="text-slate-600">
-                                Choose your boat and receive your Navigator app access code at checkout
+                            <h3 className="text-xl font-bold text-slate-900 mb-3">Download The Application</h3>
+                            <p className="text-slate-600 mb-4">
+                                Download the app from the download button below
                             </p>
+
+                            {canInstall && !isStandalone && (
+                                <div className="flex justify-center">
+                                    <button
+                                        className="cssbuttons-2"
+                                        onClick={handleInstallClick}
+                                    >
+                                        <span>Install App</span>
+                                    </button>
+                                </div>
+                            )}
                         </div>
                         <div className="text-center">
                             <div className="w-16 h-16 bg-blue-600 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6 shadow-lg">

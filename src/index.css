@@ -1,3 +1,121 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.cssbuttons-io-button {
+    background: linear-gradient(to right, #8e2de2, #4a00e0);
+    color: ghostwhite;
+    font-family: inherit;
+    padding: 0.25em;
+    padding-left: 1em;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 0.8em;
+    border: none;
+    letter-spacing: 0.03em;
+    display: flex;
+    align-items: center;
+    box-shadow: inset 0 0 1.2em -0.6em #4a00e0;
+    overflow: hidden;
+    position: relative;
+    height: 2.3em;
+    padding-right: 2.8em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.cssbuttons-io-button .icon {
+    background: white;
+    margin-left: 1em;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 1.9em;
+    width: 1.9em;
+    border-radius: 0.6em;
+    box-shadow: 0.1em 0.1em 0.6em 0.2em #4a00e0;
+    right: 0.3em;
+    transition: all 0.3s ease;
+}
+
+.cssbuttons-io-button:hover .icon {
+    width: calc(100% - 0.6em);
+}
+
+.cssbuttons-io-button .icon svg {
+    width: 1.1em;
+    transition: transform 0.3s ease;
+    color: #4a00e0;
+}
+
+.cssbuttons-io-button:hover .icon svg {
+    transform: translateX(0.1em);
+}
+
+.cssbuttons-io-button:active .icon {
+    transform: scale(0.95);
+}
+
+
+
+.cssbuttons-2 {
+    position: relative;
+    font-family: inherit;
+    font-weight: 500;
+    font-size: 14px;
+    letter-spacing: 0.05em;
+    border-radius: 0.8em;
+    cursor: pointer;
+    border: none;
+    background: #ffffff;
+    color: ghostwhite;
+    overflow: hidden;
+}
+
+.cssbuttons-2 svg {
+    width: 1.2em;
+    height: 1.2em;
+    margin-right: 0.5em;
+}
+
+.cssbuttons-2 span {
+    position: relative;
+    z-index: 10;
+    transition: color 0.4s ease;
+    display: inline-flex;
+    align-items: center;
+    padding: 0.4em 1em 0.4em 0.9em;
+}
+
+.cssbuttons-2::before,
+.cssbuttons-2::after {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+.cssbuttons-2::before {
+    content: "";
+    background: linear-gradient(to right, #8e2de2, #4a00e0);
+    width: 120%;
+    left: -10%;
+    transform: skew(30deg);
+    transition: transform 0.4s cubic-bezier(0.3, 1, 0.8, 1);
+}
+
+.cssbuttons-2:hover::before {
+    transform: translate3d(100%, 0, 0);
+}
+
+/* 👇 Text color change on hover */
+.cssbuttons-2:hover span {
+    color: #4a00e0; /* dark purple text once gradient slides off */
+}
+
+.cssbuttons-2:active {
+    transform: scale(0.95);
+}
