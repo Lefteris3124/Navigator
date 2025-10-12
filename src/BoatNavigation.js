@@ -330,30 +330,7 @@ export default function BoatNavigation() {
                                 <p style={{ fontSize: 12, color: '#475569', margin: 0 }}>Navigate • Explore • Discover</p>
                             </div>
 
-                            {/* Install button only when installable and not already installed */}
-                            {canInstall && !isStandalone && (
-                                <Button
-                                    id="installBtn"
-                                    size="sm"
-                                    onClick={handleInstallClick}
-                                    className="shadow-sm"
-                                    style={{
-                                        height: 32,
-                                        padding: '0 12px',
-                                        borderRadius: 9999,
-                                        background: 'rgba(37, 99, 235, 0.9)',
-                                        color: 'white',
-                                        fontSize: 12,
-                                        fontWeight: 700,
-                                        border: '1px solid rgba(0,0,0,0.06)',
-                                        backdropFilter: 'blur(4px)',
-                                        WebkitBackdropFilter: 'blur(4px)',
-                                    }}
-                                    title="Install to Home Screen"
-                                >
-                                    Install App
-                                </Button>
-                            )}
+
                         </div>
                     </div>
 
