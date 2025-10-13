@@ -1,5 +1,6 @@
-import { Anchor, Navigation, Waves, MapPin, Clock, Shield, ChevronRight, Star } from 'lucide-react';
-import React, { useEffect, useRef, useState } from 'react';
+import {Anchor, ChevronRight, MapPin, Navigation, Shield, Star, Waves} from 'lucide-react';
+import React, {useEffect, useRef, useState} from 'react';
+import {useNavigate} from "react-router-dom";
 
 
 function LandingPage() {
@@ -7,6 +8,7 @@ function LandingPage() {
     const deferredPromptRef = useRef(null);
     const [canInstall, setCanInstall] = useState(false);
     const [isStandalone, setIsStandalone] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const standalone =
@@ -23,7 +25,7 @@ function LandingPage() {
 
         window.addEventListener("beforeinstallprompt", onBIP);
 
-        // ✅ Detect Opera and Safari (fallback for browsers that block beforeinstallprompt)
+        // Detect Opera and Safari
         const ua = navigator.userAgent || navigator.vendor || window.opera;
         const isOpera = /Opera|OPR\//.test(ua);
         const isSafari = /^((?!chrome|android).)*safari/i.test(ua);
@@ -53,7 +55,7 @@ function LandingPage() {
             deferredPromptRef.current = null;
             setCanInstall(false);
         } else {
-            // 📱 Manual fallback for Opera / Safari
+            //  Manual fallback for Opera / Safari
             alert("To install the app, open the browser menu and select 'Add to Home screen'.");
         }
     };
@@ -76,14 +78,14 @@ function LandingPage() {
                     {/* Buttons section */}
                     <div
                         className="
-        grid grid-cols-2 gap-3 justify-items-center
+        grid grid-cols-2 gap-35 justify-items-center
         sm:flex sm:justify-end sm:gap-6
       "
                     >
                         <a href="#features" className="cssbuttons-2">
   <span>
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M13 7l5 5m0 0l-5 5m5-5H6" />
     </svg>
     Features
   </span>
@@ -105,20 +107,21 @@ function LandingPage() {
                 {/* 🎥 background video */}
                 <video
                     autoPlay
-                    loop
                     muted
+                    loop
                     playsInline
                     preload="auto"
                     className="absolute inset-0 w-full h-full object-cover"
+                    onLoadedData={(e) => e.target.play().catch(() => {})}
                 >
                     <source src="/NavigatorVid.mp4" type="video/mp4" />
-                    Your browser does not support the video tag.
                 </video>
 
-                {/* 🌫️ overlay for readability */}
+
+                {/* 🌫 overlay for readability */}
                 <div className="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
 
-                {/* ✨ content (your original section stays here) */}
+
                 <div className="relative z-10 container mx-auto max-w-6xl">
                     <div className="grid md:grid-cols-2 gap-12 items-center">
                         <div className="space-y-8">
@@ -133,7 +136,10 @@ function LandingPage() {
                                 Experience seamless navigation with our easy-to-use app. Perfect for first-time boaters and seasoned sailors alike. Navigate safely to hidden coves, popular spots, and back to shore.
                             </p>
                             <div className="flex flex-col sm:flex-row gap-4">
-                                <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:shadow-xl hover:scale-105 flex items-center justify-center gap-2">
+                                <button
+                                    onClick={() => navigate("/navigator")}
+                                    className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:shadow-xl hover:scale-105 flex items-center justify-center gap-2"
+                                >
                                     Start Navigating
                                     <ChevronRight className="w-5 h-5" />
                                 </button>
@@ -231,16 +237,6 @@ function LandingPage() {
                                 Download the app from the download button at the top of the page.
                             </p>
 
-                            {canInstall && !isStandalone && (
-                                <div className="flex justify-center">
-                                    <button
-                                        className="cssbuttons-2"
-                                        onClick={handleInstallClick}
-                                    >
-                                        <span>Install App</span>
-                                    </button>
-                                </div>
-                            )}
                         </div>
                         <div className="text-center">
                             <div className="w-16 h-16 bg-blue-600 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6 shadow-lg">
@@ -381,7 +377,7 @@ function SocialsCard() {
             {/* Instagram */}
             <a
                 className="socialContainer containerOne"
-                href="https://www.instagram.com/diavlosmarine?igsh=MW1nZ2M2NjVqcXYyaw=="
+                href="instagram://user?username=diavlosmarine"
                 target="_blank"
                 rel="noopener noreferrer"
             >

@@ -44,7 +44,8 @@
 }
 
 .cssbuttons-io-button .icon svg {
-    width: 1.1em;
+    width: 16px;
+    height: 16px;
     transition: transform 0.3s ease;
     color: #4a00e0;
 }
@@ -111,7 +112,7 @@
     transform: translate3d(100%, 0, 0);
 }
 
-/* 👇 Text color change on hover */
+
 .cssbuttons-2:hover span {
     color: #4a00e0; /* dark purple text once gradient slides off */
 }
@@ -124,9 +125,7 @@
 .card {
     width: fit-content;
     height: fit-content;
-
     background: #06b6d4;
-
     display: flex;
     align-items: center;
     justify-content: center;
@@ -146,13 +145,24 @@
     align-items: center;
     justify-content: center;
     overflow: hidden;
+    border-radius: 25%;
     transition-duration: .3s;
 }
+
 /* instagram*/
 .containerOne:hover {
-    background-color: #d62976;
-    transition-duration: .3s;
+    background: radial-gradient(
+            circle at 30% 107%,
+            #fdf497 0%,
+            #fdf497 5%,
+            #fd5949 45%,
+            #d6249f 60%,
+            #285AEB 90%
+    );
+    box-shadow: 0 0 15px rgba(214, 36, 159, 0.5);
+    transition: all 0.3s ease;
 }
+
 /* twitter*/
 .containerTwo:hover {
     background-color: #00acee;
@@ -161,11 +171,13 @@
 /* linkdin*/
 .containerThree:hover {
     background-color: #0072b1;
+    box-shadow: 0 0 15px rgba(77, 132, 214, 0.5);
     transition-duration: .3s;
 }
 /* Whatsapp*/
 .containerFour:hover {
-    background-color: #128C7E;
+    background-color: #2cd26a;
+    box-shadow: 0 0 15px rgb(44, 210, 106);
     transition-duration: .3s;
 }
 
@@ -196,4 +208,229 @@
         transform: translateY(0);
         opacity: 1;
     }
+}
+
+
+.button-container {
+    display: flex !important;
+    background: #e5e8ee;
+    width: 300px;
+    height: 70px;
+    align-items: center;
+    justify-content: space-around;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(74, 0, 224, 0.3);
+}
+
+.button {
+    outline: 0 !important;
+    border: 0 !important;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    transition: all ease-in-out 0.1s;
+    cursor: pointer;
+}
+
+.button:hover {
+    transform: translateY(-3px);
+}
+
+.icon2 {
+    font-size: 25px;
+}
+
+
+@media (max-width: 768px) {
+    .cssbuttons-3 {
+        font-size: 12px;
+        height: 2.1em;
+        padding: 0.35em 0.9em;
+    }
+    .cssbuttons-3 span svg {
+        width: 1em;
+        height: 1em;
+        margin-right: 0.35em;
+    }
+}
+
+@media (max-width: 480px) {
+    .cssbuttons-3 {
+        font-size: 11px;
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+
+
+/* Make header buttons responsive */
+@media (max-width: 768px) {
+    .header-buttons {
+        padding-top: 0px !important;
+        padding-bottom: 8px !important;
+    }
+
+    .header-buttons > div {
+        background: none !important; /* remove purple bar background */
+        box-shadow: none !important;
+        justify-content: space-between !important;
+        padding: 0 12px !important;
+    }
+
+    .header-btn {
+        flex: 1;
+        max-width: 25%;
+    }
+
+    .header-btn.home {
+        justify-content: flex-start;
+    }
+
+    .header-btn.info {
+        justify-content: flex-end;
+    }
+}
+
+@media (max-width: 480px) {
+    .cssbuttons-2 {
+        font-size: 12px;
+        height: 3em;
+        padding: 0em 0em;
+    }
+    .cssbuttons-2 span svg {
+        width: 1em;
+        height: 1em;
+        margin-right: 0.3em;
+    }
+}
+
+
+.map-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 999999; /* 👈 make sure this is high enough */
+    background: linear-gradient(to right, #8e2de2, #4a00e0);
+    color: white;
+    font-weight: 600;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 18px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.map-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+    background: linear-gradient(to right, #7a1fd8, #3d00c2);
+}
+
+
+
+/* ---- Close Button ---- */
+.buttonclose {
+    position: relative;
+    width: 3em;
+    height: 3em;
+    border: none;
+    background: rgba(180, 83, 107, 0.15);
+    border-radius: 6px;
+    transition: background 0.3s;
+    cursor: pointer;
+}
+
+.buttonclose:hover {
+    background-color: rgb(211, 21, 21);
+}
+
+.buttonclose:active {
+    background-color: rgb(130, 0, 0);
+}
+
+.X, .Y {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 1.8em;
+    height: 1.5px;
+    background-color: #fff;
+    transition: 0.3s;
+}
+
+.X {
+    transform: translateX(-50%) rotate(45deg);
+}
+
+.Y {
+    transform: translateX(-50%) rotate(-45deg);
+}
+
+.close {
+    position: absolute;
+    top: -70%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0.4rem 1rem;
+    font-size: 11px;
+    background-color: rgb(19, 22, 24);
+    color: rgb(187, 229, 236);
+    border-radius: 3px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.buttonclose:hover > .close {
+    animation: close 0.2s forwards 0.25s;
+}
+
+@keyframes close {
+    100% {
+        opacity: 1;
+    }
+}
+
+
+/* make each sidebar button a full-width block element */
+.sidebar-btn {
+    display: block;
+    width: 100%;
+    margin-bottom: 12px;        /* space between them */
+    border: none;
+    overflow: hidden;
+    border-radius: 14px;
+}
+
+/* layout for icon + text inside */
+.sidebar-btn .btn-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: rgba(255,255,255,0.95);
+    -webkit-text-fill-color: currentColor;
+}
+
+/* Nudge icon + text left together */
+.sidebar-btn.info .btn-content {
+    transform: translateX(-6px);
+}
+
+/* hover color change */
+.sidebar-btn:hover .btn-content {
+    color: #0f172a;
+    transition: color 0.25s ease;
+}
+
+/* optional pressed state */
+.sidebar-btn:active .btn-content {
+    color: #0b1220;
 }

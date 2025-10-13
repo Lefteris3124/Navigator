@@ -5,6 +5,8 @@ import { Button } from "./components/ui/button";
 import {Anchor, ChevronRight, Navigation} from 'lucide-react';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+import { useNavigate } from "react-router-dom";
+import GoogleMap from "./GoogleMap";
 
 // ---- marker icon fix ----
 delete L.Icon.Default.prototype._getIconUrl;
@@ -17,6 +19,7 @@ L.Icon.Default.mergeOptions({
 // 👉 Center of allowed rectangle (your coords)
 const CENTER = [38.715482, 20.755199];
 
+
 // 👉 Size of the allowed rectangle (editable)
 const halfWidthMeters = 4500;   // left/right from center
 const halfHeightMeters = 8500;  // up/down from center
@@ -25,6 +28,8 @@ const halfHeightMeters = 8500;  // up/down from center
 const MARINA_LOCATION = [38.78885339128394, 20.72151825153614];
 
 // ---------------- helpers ----------------
+
+
 
 
 // Smaller/customizable divIcon
@@ -199,6 +204,8 @@ function boundsFromPoints(points) {
     return [[minLat, minLng], [maxLat, maxLng]];
 }
 
+
+
 // geolocate
 function Geolocate({ onUpdate }) {
     const watchIdRef = useRef(null);
@@ -245,6 +252,8 @@ export default function BoatNavigation() {
     const deferredPromptRef = useRef(null);
     const [canInstall, setCanInstall] = useState(false);
     const [isStandalone, setIsStandalone] = useState(false);
+    const navigate = useNavigate();
+    const [showSidebar, setShowSidebar] = useState(false);
 
 
     useEffect(() => {
@@ -314,166 +323,231 @@ export default function BoatNavigation() {
     const statusColor = outOfBounds ? '#ef4444' : '#10b981';
 
     return (
-        <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg,#0f172a,#0b3b8c,#0891b2)', position: 'relative', overflow: 'hidden' }}>
-            {/* header */}
-            <div style={{ position: 'relative', zIndex: 20, background: 'rgba(255,255,255,0.9)', borderBottom: '1px solid #dbeafe', padding: '12px 16px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                        <div style={{ width: 40, height: 40, background: 'linear-gradient(135deg,#2563eb,#06b6d4)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div
+            style={{
+                minHeight: "100vh",
+                height: "100vh",
+                overflow: "hidden", // ⛔ disables page scrolling
+                background: "linear-gradient(135deg,#0f172a,#0b3b8c,#0891b2)",
+                position: "relative"
+            }}
+        >
+
+
+            {/* HEADER SECTION */}
+            {/*<header
+                style={{
+                    position: "relative",
+                    zIndex: 20,
+                    background: "rgba(255,255,255,0.9)",
+                    borderBottom: "1px solid #dbeafe",
+                    backdropFilter: "blur(6px)",
+                    WebkitBackdropFilter: "blur(6px)",
+                }}
+            >
+                 --- Top Bar: Logo & Time ---
+                <div
+                    style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        padding: "12px 16px",
+                        flexWrap: "wrap",
+                    }}
+                >
+                     Left: Logo + Title
+                    <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                        <div
+                            style={{
+                                width: 40,
+                                height: 40,
+                                background: "linear-gradient(135deg,#2563eb,#06b6d4)",
+                                borderRadius: 12,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                            }}
+                        >
                             <Anchor className="w-6 h-6" color="white" />
                         </div>
-
-                        {/* Title + subtitle + Install button */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                            <div>
-                                <h1 style={{ fontSize: 18, fontWeight: 700, color: '#0f172a', margin: 0 }}>DiavlosNavigator</h1>
-                                <p style={{ fontSize: 12, color: '#475569', margin: 0 }}>Navigate • Explore • Discover</p>
-                            </div>
-
-
+                        <div>
+                            <h1 style={{ fontSize: 18, fontWeight: 700, color: "#0f172a", margin: 0 }}>
+                                DiavlosNavigator
+                            </h1>
+                            <p style={{ fontSize: 12, color: "#475569", margin: 0 }}>
+                                Navigate • Explore • Discover
+                            </p>
                         </div>
                     </div>
 
-                    <div style={{ textAlign: 'right' }}>
-                        <div style={{ fontSize: 14, fontWeight: 600, color: '#0f172a' }}>
-                            {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                     Right: Time + GPS
+                    <div style={{ textAlign: "right" }}>
+                        <div style={{ fontSize: 14, fontWeight: 600, color: "#0f172a" }}>
+                            {currentTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                         </div>
-                        <div style={{ fontSize: 12, color: '#059669', display: 'flex', alignItems: 'center', gap: 6, justifyContent: 'flex-end' }}>
-                            <div style={{ width: 8, height: 8, background: '#10b981', borderRadius: 9999, animation: 'pulse 2s infinite' }} />
-                            GPS {userPos ? 'Active' : 'Searching…'}
+                        <div
+                            style={{
+                                fontSize: 12,
+                                color: "#059669",
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 6,
+                                justifyContent: "flex-end",
+                            }}
+                        >
+                            <div
+                                style={{
+                                    width: 8,
+                                    height: 8,
+                                    background: "#10b981",
+                                    borderRadius: 9999,
+                                    animation: "pulse 2s infinite",
+                                }}
+                            />
+                            GPS {userPos ? "Active" : "Searching…"}
                         </div>
                     </div>
                 </div>
-            </div>
+
+
+
+            </header>*/}
 
             {/* map */}
             <div style={{ position: 'relative', height: 'calc(100vh - 80px)' }}>
-                <MapContainer
-                    center={MARINA_LOCATION}
-                    zoom={13}
-                    minZoom={11}
-                    maxZoom={16}
-                    style={{ height: '100%', width: '100%' }}
-                    zoomControl={false}
-                    attributionControl={false}
-                    whenCreated={setMap}
-                    preferCanvas={true}
-                    maxBounds={maxBounds}
-                    maxBoundsViscosity={0.6}
+
+                {/* === SIDEBAR TOGGLE BUTTON === */}
+                <button
+                    onClick={() => setShowSidebar(true)}
+                    style={{
+                        position: "absolute",
+                        top: "20px",
+                        left: "20px",
+                        background: "rgba(255,255,255,0.85)",
+                        border: "none",
+                        borderRadius: "10px",
+                        padding: "8px 12px",
+                        cursor: "pointer",
+                        zIndex: 10000,
+                        boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                    }}
+                    title="Menu"
                 >
-                    <TileLayer url="https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless_3857/default/g/{z}/{y}/{x}.jpg" />
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="22"
+                        height="22"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="black"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                    >
+                        <line x1="3" y1="6" x2="21" y2="6" />
+                        <line x1="3" y1="12" x2="21" y2="12" />
+                        <line x1="3" y1="18" x2="21" y2="18" />
+                    </svg>
+                </button>
 
-                    {/* geolocation watcher */}
-                    <Geolocate onUpdate={setUserPos} />
+                {/* === BACKDROP OVERLAY === */}
+                <div
+                    onClick={() => setShowSidebar(false)}
+                    style={{
+                        position: "fixed",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                        background: "transparent", // ← no visible film
+                        transition: "none",
+                        zIndex: showSidebar ? 9999 : -1,
+                        pointerEvents: showSidebar ? "auto" : "none",
+                    }}
+                ></div>
 
-                    {/* marina (25px) */}
-                    <Marker position={MARINA_LOCATION} icon={createCustomIcon(typeEmoji('Marina').color, typeEmoji('Marina').emoji, 25)}>
-                        <Tooltip permanent direction="bottom" offset={[0, 18]} opacity={1} className="map-label">
-                            Diavlos Marine
-                        </Tooltip>
-                        <Popup>
-                            <div className="p-2">
-                                <h3 className="font-bold text-slate-900 mb-1">Diavlos Marine</h3>
-                                <p className="text-sm text-slate-600">Your starting point</p>
-                            </div>
-                        </Popup>
-                    </Marker>
+                {/* === SIDEBAR MENU === */}
+                <div
+                    style={{
+                        position: "fixed",
+                        top: 0,
+                        left: 0,
+                        height: "100vh",
+                        width: "270px",
+                        background: "rgba(30, 41, 59, 0.85)",
+                        backdropFilter: "blur(10px)",
+                        WebkitBackdropFilter: "blur(10px)",
+                        color: "#fff",
+                        padding: "20px",
+                        boxShadow: "4px 0 15px rgba(0, 0, 0, 0.3)",
+                        zIndex: 10000,
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        transform: showSidebar ? "translateX(0)" : "translateX(-100%)",
+                        transition: "transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)",
+                    }}
+                >
+                    {/* ✅ Top section */}
+                    <div style={{ width: "100%", textAlign: "center" }}>
+                        <h2 style={{ marginBottom: "20px", fontSize: "1.2rem" }}>Diavlos Navigator</h2>
 
-                    {/* allowed rectangle */}
-                    <Rectangle bounds={ALLOWED_RECT} pathOptions={{ color: '#06b6d4', weight: 2, opacity: 0.8, fillOpacity: 0.12 }} />
+                        {/* HOME BUTTON */}
+                        <button
+                            className="cssbuttons-2 sidebar-btn"
+                            onClick={() => navigate("/")}
+                        >
+  <span className="btn-content">
+    <svg className="icon home" viewBox="0 0 24 24" width="20" height="20">
+      <path
+          fill="currentColor"
+          d="M12 3l9 8v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V11l9-8z"
+      />
+    </svg>
+    <span className="btn-label">Home</span>
+  </span>
+                        </button>
 
-                    {/* suggested locations (20px) */}
-                    {SUGGESTED_LOCATIONS.filter(l => typeEmoji(l.type)).map((loc, idx) => {
-                        const t = typeEmoji(loc.type);
-                        return (
-                            <Marker
-                                key={idx}
-                                position={loc.position}
-                                icon={createCustomIcon(t.color, t.emoji, 20)}
-                            >
-                                <Tooltip
-                                    permanent
-                                    direction="bottom"
-                                    offset={[0, 18]}
-                                    opacity={1}
-                                    className="map-label"
-                                >
-                                    {loc.name}
-                                </Tooltip>
-                                <Popup>
-                                    <div className="p-2 text-sm">
-                                        <div className="font-semibold">{loc.name}</div>
-                                        <div className="text-slate-600">{loc.description}</div>
+                        {/* INFO BUTTON */}
+                        <button
+                            className="cssbuttons-2 sidebar-btn info"
+                            onClick={() => setShowInfo(true)}
+                        >
+  <span className="btn-content">
+    <svg className="icon info" viewBox="0 0 24 24" width="20" height="20">
+      <path
+          fill="currentColor"
+          d="M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2Zm1 15h-2v-5h2zm-1-7a1.25 1.25 0 1 1 1.25-1.25A1.249 1.249 0 0 1 12 10z"
+      />
+    </svg>
+    <span className="btn-label">Info</span>
+  </span>
+                        </button>
+                    </div>
 
-                                        {/* stacked info block */}
-                                        <div style={{ marginTop: 8, display: 'flex', flexDirection: 'column', gap: 4 }}>
-                                            <div>
-                                                <Badge variant="secondary">Type: {loc.type}</Badge>
-                                            </div>
-                                            <div>
-                                                <Badge
-                                                    variant="outline"
-                                                    style={{
-                                                        borderColor: getDifficultyColor(loc.difficulty),
-                                                        color: getDifficultyColor(loc.difficulty)
-                                                    }}
-                                                >
-                                                    Difficulty: {loc.difficulty}
-                                                </Badge>
-                                            </div>
-                                            <div style={{ fontSize: 12, color: '#6b7280' }}>
-                                                Suggested stay: {loc.duration}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </Popup>
-                            </Marker>
-                        );
-                    })}
+                    {/* ✅ Bottom section — Close Button */}
+                    <button
+                        className="buttonclose"
+                        onClick={() => setShowSidebar(false)}
+                        title="Close Menu"
+                        style={{ marginTop: "auto" }}
+                    >
+                        <span className="X"></span>
+                        <span className="Y"></span>
+                        <div className="close">Close</div>
+                    </button>
+                </div>
+
+                <GoogleMap />
 
 
 
-                    {/* user position */}
-                    {userPos && (
-                        <>
-                            {/* Stable heading cone (GPS course) */}
-                                                        {courseHeading != null && (
-                                                            <Polygon
-                                                                positions={buildHeadingCone(userPos, courseHeading, 250, 75, 28)}
-                                                                pathOptions={{
-                                                                    fillColor: '#2563eb', // blue-600 for better contrast
-                                                                    fillOpacity: 0.65,     // more opaque, less transparent
-                                                                    weight: 0
-                                                                }}
-                                                            />
-                                                        )}
 
-                            <Marker position={userPos} icon={createCustomIcon(outOfBounds ? '#ef4444' : '#10b981', '🚤', 30)}>
-                                <Tooltip permanent direction="bottom" offset={[0, 18]} opacity={1} className="map-label">
-                                    You
-                                </Tooltip>
-                                <Popup>
-                                    <div className="p-2 text-sm">
-                                        <div className="font-semibold">You are here</div>
-                                        {outOfBounds ? (
-                                            <div style={{ color: '#ef4444', marginTop: 4 }}>Outside allowed area</div>
-                                        ) : (
-                                            <div style={{ color: '#10b981', marginTop: 4 }}>Inside allowed area</div>
-                                        )}
-                                        <div className="text-xs text-slate-600 mt-1">
-                                            {(() => {
-                                                const m = distanceToRectEdgeMeters(userPos, ALLOWED_RECT);
-                                                return isFinite(m) ? `~${Math.round(m)} Meters to allowed area` : '';
-                                            })()}
-                                        </div>
-                                    </div>
-                                </Popup>
-                            </Marker>
 
-                            <Circle center={userPos} radius={25} pathOptions={{ color: outOfBounds ? '#ef4444' : '#10b981', weight: 1, fillOpacity: 0.15 }} />
-                        </>
-                    )}
-                </MapContainer>
 
                 {/* --- HUD overlay (single Info button/panel) --- */}
                 <div
@@ -487,13 +561,7 @@ export default function BoatNavigation() {
                 >
 
 
-                    {/* INFO BUTTON (bottom-right) */}
-                    <div style={{ position: 'absolute', right: 16, bottom: TOGGLE_BOTTOM, pointerEvents: 'auto' }}>
-                        <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:shadow-xl hover:scale-105 flex items-center justify-center gap-2">
-                            Start Navigating
-                            <ChevronRight className="w-5 h-5" />
-                        </button>
-                    </div>
+
 
                     {/* INFO PANEL — opens ABOVE the button */}
                     {showInfo && (
@@ -545,7 +613,7 @@ export default function BoatNavigation() {
                                 }}
                             >
                                 <Navigation className="w-4 h-4" color="#059669" />
-                                Info
+                                    Info
                             </h3>
 
                             <div style={{ marginTop: 8, fontSize: 14 }}>
@@ -616,6 +684,7 @@ export default function BoatNavigation() {
           line-height: 1;
         }
       `}</style>
+
         </div>
     );
 }
