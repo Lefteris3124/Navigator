@@ -8,6 +8,8 @@ import L from 'leaflet';
 import { useNavigate } from "react-router-dom";
 import GoogleMap from "./GoogleMap";
 
+
+
 // ---- marker icon fix ----
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({

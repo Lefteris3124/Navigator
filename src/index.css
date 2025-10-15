@@ -434,3 +434,343 @@
 .sidebar-btn:active .btn-content {
     color: #0b1220;
 }
+
+
+.mylocation-btn {
+    position: absolute;
+    bottom: 25px;            /* below zoom buttons */
+    right: 20px;
+    width: auto;
+    padding: 8px 14px;
+    border-radius: 10px;
+    border: none;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mylocation-btn .btn-content {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: white;
+    -webkit-text-fill-color: currentColor;
+}
+
+.mylocation-btn .icon {
+    flex-shrink: 0;
+    transition: transform 0.25s ease;
+}
+
+
+.mylocation-btn:hover .icon {
+    transform: translateY(-2px);
+}
+
+
+.emoji-pin {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background-color: #0077ff;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25);
+    cursor: pointer;
+    transform: translate(-50%, -100%); /* ✅ Center horizontally and anchor bottom */
+}
+
+.emoji-pin .emoji {
+    font-size: 22px;
+    line-height: 1;
+    user-select: none;
+}
+
+.tooltip {
+    position: absolute;
+    top: 48px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.95);
+    color: #333;
+    padding: 4px 8px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    opacity: 1;
+    pointer-events: none;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.4);
+}
+
+
+.emoji-pin .tooltip {
+    position: absolute;
+    top: 48px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.95);
+    color: #333;
+    padding: 4px 8px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    opacity: 1;
+    pointer-events: none;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.4);
+}
+
+
+
+
+/* --- Fix Google Map's injected styles --- */
+.gm-style-iw-d,
+.gm-style-iw-c {
+    display: block !important;
+    overflow: visible !important;
+}
+
+/* Hide the close (X) button */
+.gm-ui-hover-effect {
+    display: none !important;
+}
+
+/* Remove white Google bubble */
+.gm-style-iw {
+    background: transparent !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+}
+
+/* Remove Google’s default tail + shadow */
+.gm-style-iw-t::after,
+.gm-style-iw-t::before {
+    display: none !important;
+}
+
+.gm-style-iw-c {
+    background: transparent !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+}
+
+/* ====================================================== */
+/* ✅ Force InfoWindow & Card Alignment to Left           */
+/* ====================================================== */
+.gm-style-iw,
+.gm-style-iw-c,
+.gm-style-iw-d {
+    text-align: left !important;
+    display: flex !important;
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
+    flex-direction: column !important;
+}
+
+/* Custom card wrapper */
+.info-card {
+    text-align: left !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+}
+
+/* Top section: no avatar, align left */
+.top-section {
+    display: flex !important;
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
+    width: 100%;
+    padding-left: 0 !important;
+    margin-left: 0 !important;
+}
+
+/* Pills container — scoped to only info cards */
+.info-card .info {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    gap: 4px;
+}
+
+/* Top two pills */
+.content-1,
+.info-2 {
+    width: fit-content !important;
+    margin-left: 0 !important;
+    margin-right: auto !important;
+    display: inline-flex !important;
+    justify-content: flex-start !important;
+}
+
+/* --- Optional: fine-tune spacing --- */
+.info-1 {
+    margin-top: 2px;
+}
+
+/* ====================================================== */
+/* ✅ Modern White Card with Stronger Borders             */
+/* ====================================================== */
+.card.info-card {
+    width: 280px;
+    min-height: 140px;
+    border-radius: 18px;
+    background: linear-gradient(145deg, #ffffff, #f5f7fa);
+    border: 2px solid rgba(180, 180, 180, 0.7);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25),
+    inset 0 1px 2px rgba(255, 255, 255, 0.5);
+    padding: 12px 16px;
+}
+
+/* Title pill */
+.info-1 {
+    background: #ffffff;
+    border: 1.5px solid rgba(160, 160, 160, 0.6);
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-weight: 600;
+    font-size: 13px;
+    color: #222;
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+}
+
+.info {            /* let children take full width */
+    align-items: stretch !important;
+    width: 100% !important;
+}
+
+.info-1 {
+    display: block !important;
+    width: calc(100%) !important;   /* stretch + 8px gap each side */
+    margin: 0 !important;
+    text-align: center;
+}
+
+/* Category pill */
+.info-2 {
+    background: #f6f7f8;
+    border: 1.5px solid rgba(170, 170, 170, 0.6);
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 11px;
+    color: #333;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+/* Main content */
+.content-1 {
+    width: 92%;
+    border-radius: 10px;
+    background: #fdfdfd;
+    padding: 8px 10px;
+    margin: 6px auto;
+    text-align: left;
+    color: #333;
+    font-size: 13px;
+    line-height: 1.4;
+    border: 1.5px solid rgba(200, 200, 200, 0.6);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* Bottom pills row */
+.bottom-row {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 8px;
+}
+
+/* Difficulty / Stay pills */
+.bottom-row .pill {
+    background: #ffffff;
+    border: 1.5px solid rgba(180, 180, 180, 0.7);
+    border-radius: 8px;
+    padding: 5px 10px;
+    font-size: 12px;
+    color: #222;
+    font-weight: 500;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+
+.marker-label {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    padding: 2px 6px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #222;
+    white-space: nowrap;
+
+    /* ✅ move below the pin */
+    transform: translateY(40px);
+}
+
+/* ✅ Reset sidebar info button layout */
+.sidebar-btn.info {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-direction: row !important;
+    margin: 0 !important;
+    padding: 8px 14px !important;
+    text-align: center !important;
+}
+
+
+/* Custom circular pins */
+.custom-pin {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: #0077ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 18px;
+    border: 2px solid white;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.custom-pin:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+.emoji {
+    font-size: 15px;
+    pointer-events: none;
+}
+
+/* Tooltip below marker */
+.marker-tooltip {
+    position: absolute;
+    top: 42px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    color: #333;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+    white-space: nowrap;
+    pointer-events: none;
+}

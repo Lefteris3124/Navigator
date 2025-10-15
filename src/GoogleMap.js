@@ -1,5 +1,7 @@
 /* global google */
 import React, { useEffect, useRef, useState } from "react";
+import { supabase } from "./lib/supabase";
+import { getOrCreateSessionId } from "./utils/session";
 
 export default function GoogleMap() {
     const mapRef = useRef(null);
@@ -8,87 +10,216 @@ export default function GoogleMap() {
     const [userPos, setUserPos] = useState(null);
     const [gpsError, setGpsError] = useState(null);
 
+    async function updateActiveUser(lat, lng) {
+        const sessionId = getOrCreateSessionId();
+
+        const { error } = await supabase
+            .from("active_users")
+            .upsert(
+                {
+                    session_id: sessionId,
+                    latitude: lat,
+                    longitude: lng,
+                    last_seen: new Date().toISOString(),
+                    status: "active",
+                },
+                { onConflict: "session_id" }
+            );
+
+        if (error) console.error("Error updating user:", error);
+    }
+
     useEffect(() => {
         const initMap = async () => {
             const { Map } = await google.maps.importLibrary("maps");
             const { Marker } = await google.maps.importLibrary("marker");
 
             const map = new Map(mapRef.current, {
+                mapId: "76e918191ebb4fda13ec7338",
                 center: { lat: 38.788853, lng: 20.721518 },
-                zoom: 13,
                 mapTypeId: "satellite",
+                zoom: 13,
                 disableDefaultUI: true,
                 zoomControl: true,
-                minZoom: 7,
-                maxZoom: 15,
-            });
-
-            const allowedBounds = {
-                north: 38.82,
-                south: 38.60,
-                west: 20.67,
-                east: 20.81,
-            };
-
-            map.setOptions({
-                latLngBounds: allowedBounds,
-                strictBounds: false,
-                zoomControlOptions: {
-                    position: google.maps.ControlPosition.RIGHT_TOP,
-
+                restriction: {
+                    latLngBounds: {
+                        north: 38.87,
+                        south: 38.56,
+                        west: 20.61,
+                        east: 20.87,
+                    },
+                    strictBounds: false,
                 },
             });
 
             mapInstanceRef.current = map;
 
-            // ✅ Add static custom markers
+
+
+            // ✅ Marker data
             const locations = [
                 {
                     name: "Diavlos Marine",
-                    position: { lat: 38.788853, lng: 20.721518 },
-                    icon: { url: "/icons/Limani.png", scaledSize: new google.maps.Size(42, 42) },
+                    lat: 38.788132428014464,
+                    lng: 20.72020519077176,
+                    description: "Your Starting Point.",
+                    type: "Marina",
+                    difficulty: "Easy",
+                    stay: "",
+                    color: "#55b8ef",
+                    emoji: "⚓",
                 },
                 {
                     name: "Vathiavali Beach",
-                    position: { lat: 38.76418558916113, lng: 20.789713587619833 },
-                    icon: { url: "/icons/beach.png", scaledSize: new google.maps.Size(40, 40) },
+                    lat: 38.76331974241167,
+                    lng: 20.788981684254974,
+                    description: "Calm waters, no road access, more private.",
+                    type: "Beach",
+                    difficulty: "Easy",
+                    stay: "2 hours",
+                    color: "#0077ff",
+                    emoji: "🏖️",
                 },
                 {
                     name: "Papanikolis Cave",
-                    position: { lat: 38.6148442212325, lng: 20.759276148506192 },
-                    icon: {
-                        url: "https://cdn-icons-png.flaticon.com/512/616/616554.png",
-                        scaledSize: new google.maps.Size(40, 40),
-                    },
+                    lat: 38.6148442212325,
+                    lng: 20.759276148506192,
+                    description: "Calm waters, no road access, more private.",
+                    type: "Beach",
+                    difficulty: "Easy",
+                    stay: "2 hours",
+                    color: "#c043ed",
+                    emoji: "🕳️",
                 },
                 {
                     name: "Karnagio Restaurant",
-                    position: { lat: 38.665472594390145, lng: 20.777818493575722 },
-                    icon: {
-                        url: "https://cdn-icons-png.flaticon.com/512/3075/3075977.png",
-                        scaledSize: new google.maps.Size(40, 40),
-                    },
+                    lat: 38.665472594390145,
+                    lng: 20.777818493575722,
+                    description: "Calm waters, no road access, more private.",
+                    type: "Beach",
+                    difficulty: "Easy",
+                    stay: "2 hours",
+                    color: "#ffa400",
+                    emoji: "🍴",
                 },
             ];
 
+
+            function smoothZoomAndPan(map, targetLatLng, targetZoom = 15, duration = 800) {
+                const startZoom = map.getZoom();
+                const startCenter = map.getCenter();
+
+                // ✅ Normalize input — handle both LatLng objects and plain objects
+                const target = targetLatLng.lat ? targetLatLng : {
+                    lat: targetLatLng.lat(),
+                    lng: targetLatLng.lng(),
+                };
+
+                const startLat = startCenter.lat();
+                const startLng = startCenter.lng();
+                const endLat = target.lat;
+                const endLng = target.lng;
+                const zoomDiff = targetZoom - startZoom;
+                const startTime = performance.now();
+
+                const ease = (t) => 1 - Math.pow(1 - t, 3);
+
+                function animate() {
+                    const now = performance.now();
+                    const progress = Math.min((now - startTime) / duration, 1);
+                    const eased = ease(progress);
+
+                    const newLat = startLat + (endLat - startLat) * eased;
+                    const newLng = startLng + (endLng - startLng) * eased;
+                    const newZoom = startZoom + zoomDiff * eased;
+
+                    map.setCenter({ lat: newLat, lng: newLng });
+                    map.setZoom(newZoom);
+
+                    if (progress < 1) requestAnimationFrame(animate);
+                }
+
+                requestAnimationFrame(animate);
+            }
+
+            let openInfoWindow = null;
+
+// ✅ Loop through all markers
             locations.forEach((loc) => {
-                const marker = new Marker({
-                    position: loc.position,
+                // Create the main pin element
+                const pinDiv = document.createElement("div");
+                pinDiv.className = "custom-pin";
+                pinDiv.style.backgroundColor = loc.color || "#0077ff";
+                if (loc.emoji) pinDiv.innerHTML = `<div class="emoji">${loc.emoji}</div>`;
+
+                // Create a wrapper for pin + tooltip
+                const wrapper = document.createElement("div");
+                wrapper.className = "marker-wrapper";
+                wrapper.appendChild(pinDiv);
+
+                // Tooltip element
+                const tooltip = document.createElement("div");
+                tooltip.className = "marker-tooltip";
+                tooltip.textContent = loc.name;
+                wrapper.appendChild(tooltip);
+
+
+
+                // Create the AdvancedMarkerElement
+                const marker = new google.maps.marker.AdvancedMarkerElement({
                     map,
+                    position: { lat: loc.lat, lng: loc.lng },
                     title: loc.name,
-                    icon: loc.icon,
+                    content: wrapper,
                 });
+
+                // Info window content
+                const content = `
+      <div class="card info-card">
+        <div class="top-section">
+          <div class="info">
+            <div class="info-1">${loc.name}</div>
+            <div class="info-2">${loc.type}</div>
+          </div>
+        </div>
+        <div class="content-1">${loc.description}</div>
+        <div class="bottom-row">
+          <div class="pill difficulty">Difficulty: ${loc.difficulty}</div>
+          ${loc.stay ? `<div class="pill stay">Stay: ${loc.stay}</div>` : ""}
+        </div>
+      </div>
+    `;
 
                 const infoWindow = new google.maps.InfoWindow({
-                    content: `<div style="font-size:14px; font-weight:600;">${loc.name}</div>`,
+                    content,
+                    maxWidth: 280,
                 });
 
+                // Click logic
                 marker.addListener("click", () => {
-                    infoWindow.open(map, marker);
+                    if (openInfoWindow) openInfoWindow.close();
+
+                    // 🧭 Smoothly zoom & pan toward the marker
+                    const currentZoom = map.getZoom();
+                    const targetZoom = Math.max(currentZoom, 15); // zoom in if too far
+                    smoothZoomAndPan(map, { lat: loc.lat, lng: loc.lng }, targetZoom);
+
+                    // open info window after animation starts
+                    setTimeout(() => {
+                        infoWindow.open(map, marker);
+                        openInfoWindow = infoWindow;
+                    }, 400);
+                });
+
+                map.addListener("click", () => {
+                    if (openInfoWindow) {
+                        openInfoWindow.close();
+                        openInfoWindow = null;
+                    }
                 });
             });
 
-            // ✅ Setup user marker (GPS)
+            // ✅ User marker
             userMarkerRef.current = new Marker({
                 map,
                 icon: {
@@ -102,17 +233,20 @@ export default function GoogleMap() {
             });
         };
 
-        // Load Google Maps
-        const script = document.createElement("script");
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&v=weekly`;
-        script.async = true;
-        script.defer = true;
-        script.onload = initMap;
-        document.head.appendChild(script);
-        return () => document.head.removeChild(script);
+        // ✅ Load script once
+        if (window.google && google.maps) {
+            initMap();
+        } else {
+            const script = document.createElement("script");
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&v=weekly`;
+            script.async = true;
+            script.defer = true;
+            script.onload = initMap;
+            document.head.appendChild(script);
+        }
     }, []);
 
-    // ✅ Watch GPS position
+    // ✅ GPS tracking
     useEffect(() => {
         if (!navigator.geolocation) {
             setGpsError("Geolocation not supported");
@@ -120,15 +254,17 @@ export default function GoogleMap() {
         }
 
         const watcher = navigator.geolocation.watchPosition(
-            (pos) => {
+            async (pos) => {
                 const lat = pos.coords.latitude;
                 const lng = pos.coords.longitude;
-                setUserPos({ lat, lng });
 
-                // update marker position
-                if (userMarkerRef.current) {
+                // ✅ Update local map position
+                setUserPos({ lat, lng });
+                if (userMarkerRef.current)
                     userMarkerRef.current.setPosition({ lat, lng });
-                }
+
+                // ✅ Update Supabase active_users table
+                await updateActiveUser(lat, lng);
             },
             (err) => setGpsError(err.message),
             { enableHighAccuracy: true, maximumAge: 5000, timeout: 10000 }
@@ -137,7 +273,6 @@ export default function GoogleMap() {
         return () => navigator.geolocation.clearWatch(watcher);
     }, []);
 
-    // ✅ Recenter map on user position
     const handleCenterOnUser = () => {
         if (mapInstanceRef.current && userPos) {
             mapInstanceRef.current.panTo(userPos);
@@ -147,39 +282,12 @@ export default function GoogleMap() {
 
     return (
         <div style={{ position: "relative", width: "100%", height: "100vh" }}>
-            {/* Google Map */}
-            <div
-                ref={mapRef}
-                style={{
-                    width: "100%",
-                    height: "100%",
-                    border: "none",
-                }}
-            />
-
-            {/* Floating My Location button */}
-            <button
-                onClick={handleCenterOnUser}
-                style={{
-                    position: "absolute",
-                    bottom: "140px",
-                    right: "20px",
-                    padding: "10px 16px",
-                    fontSize: "14px",
-                    fontWeight: "600",
-                    color: "white",
-                    background: "linear-gradient(to right, #4a00e0, #8e2de2)",
-                    border: "none",
-                    borderRadius: "10px",
-                    cursor: "pointer",
-                    boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
-                    zIndex: 9999,
-                }}
-            >
-                📍 My Location
+            <div ref={mapRef} style={{ width: "100%", height: "100%" }} />
+            <button className="cssbuttons-2 mylocation-btn" onClick={handleCenterOnUser}>
+        <span className="btn-content">
+          📍 My Location
+        </span>
             </button>
-
-            {/* GPS Error Message */}
             {gpsError && (
                 <div
                     style={{
