@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { RefreshCw, Activity, Bell, Users, Anchor } from 'lucide-react';
 import { supabase } from '../lib/supabase';
-import NotificationForm from './NotificationForm';
-import NotificationHistory from './NotificationHistory';
-import QuickMessages from './QuickMessages';
+import NotificationForm from './NotificationForm.jsx';
+import NotificationHistory from './NotificationHistory.jsx';
+import QuickMessages from '/components/QuickMessages.jsx';
 import LiveMap from './LiveMap';
 
 export default function AdminPanel() {
