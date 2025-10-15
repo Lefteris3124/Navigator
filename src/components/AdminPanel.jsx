@@ -3,7 +3,7 @@ import { RefreshCw, Activity, Bell, Users, Anchor } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import NotificationForm from './NotificationForm.jsx';
 import NotificationHistory from './NotificationHistory.jsx';
-import QuickMessages from ',/QuickMessages.jsx';
+import QuickMessages from './QuickMessages.jsx';
 import LiveMap from './LiveMap';
 
 export default function AdminPanel() {
