@@ -2,6 +2,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { supabase } from "./lib/supabase";
 import { getOrCreateSessionId } from "./utils/session";
+import { updateActiveUser } from "./utils/activeUsers";
 
 export default function GoogleMap() {
     const mapRef = useRef(null);
@@ -10,24 +11,13 @@ export default function GoogleMap() {
     const [userPos, setUserPos] = useState(null);
     const [gpsError, setGpsError] = useState(null);
 
-    async function updateActiveUser(lat, lng) {
-        const sessionId = getOrCreateSessionId();
+    const sessionId = getOrCreateSessionId();
 
-        const { error } = await supabase
-            .from("active_users")
-            .upsert(
-                {
-                    session_id: sessionId,
-                    latitude: lat,
-                    longitude: lng,
-                    last_seen: new Date().toISOString(),
-                    status: "active",
-                },
-                { onConflict: "session_id" }
-            );
+    useEffect(() => {
+        console.log("🆔 Session ID:", sessionId);
+    }, []);
 
-        if (error) console.error("Error updating user:", error);
-    }
+
 
     useEffect(() => {
         const initMap = async () => {
@@ -41,6 +31,9 @@ export default function GoogleMap() {
                 zoom: 13,
                 disableDefaultUI: true,
                 zoomControl: true,
+                zoomControlOptions: {
+                    position: google.maps.ControlPosition.RIGHT_TOP,
+                },
                 restriction: {
                     latLngBounds: {
                         north: 38.87,
@@ -246,25 +239,29 @@ export default function GoogleMap() {
         }
     }, []);
 
-    // ✅ GPS tracking
+    //GPS TRACK
     useEffect(() => {
+
+
         if (!navigator.geolocation) {
             setGpsError("Geolocation not supported");
             return;
         }
 
         const watcher = navigator.geolocation.watchPosition(
-            async (pos) => {
+            (pos) => {
                 const lat = pos.coords.latitude;
                 const lng = pos.coords.longitude;
-
-                // ✅ Update local map position
                 setUserPos({ lat, lng });
+
+                console.log("📍 GPS position:", lat, lng);
+                console.log("🆔 Session ID:", sessionId);
+
                 if (userMarkerRef.current)
                     userMarkerRef.current.setPosition({ lat, lng });
 
-                // ✅ Update Supabase active_users table
-                await updateActiveUser(lat, lng);
+                // ✅ update Supabase
+                updateActiveUser(sessionId, lat, lng);
             },
             (err) => setGpsError(err.message),
             { enableHighAccuracy: true, maximumAge: 5000, timeout: 10000 }
