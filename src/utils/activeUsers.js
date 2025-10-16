@@ -12,7 +12,7 @@ export async function updateActiveUser(sessionId, userLat, userLng) {
             updated_at: new Date().toISOString(),
         };
 
-        console.log("📤 Sending payload to Supabase:", payload);
+        //console.log("📤 Sending payload to Supabase:", payload);
 
         const { data, error } = await supabase
             .from("active_users")
@@ -21,7 +21,7 @@ export async function updateActiveUser(sessionId, userLat, userLng) {
         if (error) {
             console.error("❌ Error updating user:", error);
         } else {
-            console.log("✅ User upserted:", data);
+           // console.log("✅ User upserted:", data);
         }
     } catch (err) {
         console.error("🔥 Unexpected error in updateActiveUser:", err);

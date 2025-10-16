@@ -7,6 +7,7 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { useNavigate } from "react-router-dom";
 import GoogleMap from "./GoogleMap";
+import { registerPushNotifications } from "./utils/pushNotifications";
 
 
 
@@ -91,6 +92,8 @@ function useCourseHeading(
             prevRef.current = { pos: userPos, t: now };
             return;
         }
+
+
 
         const dt = now - prev.t;
         if (dt < minIntervalMs) return;
@@ -281,6 +284,14 @@ export default function BoatNavigation() {
             window.removeEventListener('beforeinstallprompt', onBIP);
             window.removeEventListener('appinstalled', onInstalled);
         };
+    }, []);
+
+    useEffect(() => {
+        const sessionId =
+            localStorage.getItem("session_id") ||
+            (localStorage.setItem("session_id", crypto.randomUUID()), localStorage.getItem("session_id"));
+
+        registerPushNotifications(sessionId);
     }, []);
 
     const handleInstallClick = async () => {

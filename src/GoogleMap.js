@@ -14,7 +14,7 @@ export default function GoogleMap() {
     const sessionId = getOrCreateSessionId();
 
     useEffect(() => {
-        console.log("🆔 Session ID:", sessionId);
+       // console.log("🆔 Session ID:", sessionId);
     }, []);
 
 
@@ -34,15 +34,15 @@ export default function GoogleMap() {
                 zoomControlOptions: {
                     position: google.maps.ControlPosition.RIGHT_TOP,
                 },
-                //restriction: {
-                    //latLngBounds: {
-                    //    north: 38.87,
-                     //   south: 38.56,
-                     //   west: 20.61,
-                     //   east: 20.87,
-                   // },
-                   // strictBounds: false,
-                //},
+                restriction: {
+                    latLngBounds: {
+                        north: 38.87,
+                        south: 38.56,
+                        west: 20.61,
+                        east: 20.87,
+                    },
+                    strictBounds: false,
+                },
             });
 
             mapInstanceRef.current = map;
@@ -254,8 +254,8 @@ export default function GoogleMap() {
                 const lng = pos.coords.longitude;
                 setUserPos({ lat, lng });
 
-                console.log("📍 GPS position:", lat, lng);
-                console.log("🆔 Session ID:", sessionId);
+                //console.log("📍 GPS position:", lat, lng);
+                //console.log("🆔 Session ID:", sessionId);
 
                 if (userMarkerRef.current)
                     userMarkerRef.current.setPosition({ lat, lng });
