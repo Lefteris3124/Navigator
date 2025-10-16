@@ -335,26 +335,7 @@ export default function BoatNavigation() {
     const statusText = outOfBounds ? 'Outside Bounds' : 'Inside Bounds';
     const statusColor = outOfBounds ? '#ef4444' : '#10b981';
 
-    async function sendTestNotification() {
-        try {
-            const response = await fetch(`${process.env.REACT_APP_SUPABASE_URL}/functions/v1/send-notification`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${process.env.REACT_APP_SUPABASE_ANON_KEY}`,
-                },
-                body: JSON.stringify({
-                    title: "Test Notification",
-                    message: "This is a test message",
-                }),
-            });
 
-            const data = await response.json();
-            console.log("Send notification result:", data);
-        } catch (err) {
-            console.error("Failed to send notification:", err);
-        }
-    }
 
 
     return (
@@ -563,20 +544,6 @@ export default function BoatNavigation() {
   </span>
                         </button>
 
-                        <button
-                            onClick={sendTestNotification}
-                            style={{
-                                background: "#0ea5e9",
-                                border: "none",
-                                color: "white",
-                                padding: "10px 16px",
-                                borderRadius: "8px",
-                                marginTop: "12px",
-                                cursor: "pointer",
-                            }}
-                        >
-                            Send Test Notification
-                        </button>
 
                     </div>
 
