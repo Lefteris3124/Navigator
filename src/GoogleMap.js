@@ -75,8 +75,8 @@ export default function GoogleMap() {
                 },
                 {
                     name: "Papanikolis Cave",
-                    lat: 38.6148442212325,
-                    lng: 20.759276148506192,
+                    lat: 38.614138645126936,
+                    lng: 20.762608511962913,
                     description: "Calm waters, no road access, more private.",
                     type: "Beach",
                     difficulty: "Easy",
