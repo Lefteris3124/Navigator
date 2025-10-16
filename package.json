@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@googlemaps/js-api-loader": "^2.0.1",
+    "@googlemaps/markerclusterer": "^2.6.2",
     "@radix-ui/react-slot": "^1.2.3",
     "@supabase/supabase-js": "^2.75.0",
     "@testing-library/dom": "^10.4.1",

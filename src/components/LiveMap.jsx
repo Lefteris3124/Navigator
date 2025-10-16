@@ -2,6 +2,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { supabase } from "../lib/supabase";
 import { v4 as uuidv4 } from "uuid";
+import { MarkerClusterer } from "@googlemaps/markerclusterer";
 
 export default function LiveMap({ users }) {
     const mapRef = useRef(null);
@@ -17,19 +18,41 @@ export default function LiveMap({ users }) {
     // 🌍 Send periodic location + heartbeat updates
     useEffect(() => {
         const sendHeartbeat = async () => {
-            const latitude = window.currentLat || 0;
-            const longitude = window.currentLng || 0;
+            if (!("geolocation" in navigator)) {
+                console.warn("Geolocation not supported");
+                return;
+            }
 
-            await supabase.from("active_users").upsert(
-                {
-                    session_id: sessionId,
-                    latitude,
-                    longitude,
-                    last_seen: new Date().toISOString(),
-                    status: "active",
-                    updated_at: new Date().toISOString(),
+            navigator.geolocation.getCurrentPosition(
+                async (pos) => {
+                    const latitude = pos.coords.latitude;
+                    const longitude = pos.coords.longitude;
+
+                    // ✅ skip invalid coordinates
+                    if (!latitude || !longitude) {
+                        console.warn("Invalid coordinates — skipping update");
+                        return;
+                    }
+
+                    await supabase
+                        .from("active_users")
+                        .upsert(
+                            {
+                                session_id: sessionId,
+                                latitude,
+                                longitude,
+                                last_seen: new Date().toISOString(),
+                                status: "active",
+                                updated_at: new Date().toISOString(),
+                            },
+                            { onConflict: "session_id" }
+                        );
                 },
-                { onConflict: "session_id" }
+                (err) => {
+                    console.error("Geolocation error:", err.message);
+                    // Optional: update status to inactive if denied
+                },
+                { enableHighAccuracy: true, maximumAge: 5000, timeout: 10000 }
             );
         };
 
@@ -90,28 +113,52 @@ export default function LiveMap({ users }) {
         }
     }, []);
 
-    // 📍 Update markers whenever the user list changes
     useEffect(() => {
         const map = mapInstanceRef.current;
         if (!map) return;
 
         // Clear old markers
-        markersRef.current.forEach((m) => m.map = null);
+        markersRef.current.forEach((m) => (m.map = null));
         markersRef.current = [];
 
         if (!users || users.length === 0) return;
 
+        // ✅ Declare these before the loop
         const bounds = new google.maps.LatLngBounds();
+        const newMarkers = [];
 
         users.forEach((user) => {
             if (!user.latitude || !user.longitude) return;
-            if (user.status === "inactive" && !showInactive) return; // ✅ hide inactive
+            if (user.status === "inactive" && !showInactive) return;
 
             let color = "#00cc66";
             if (user.status === "emergency") color = "#ff3333";
             else if (user.status === "inactive") color = "#888888";
 
-            // ✅ Create custom element for marker
+            // Base position
+            let lat = Number(user.latitude);
+            let lng = Number(user.longitude);
+
+            // ✅ Check for duplicates
+            const duplicates = users.filter(
+                (u) =>
+                    Number(u.latitude) === Number(user.latitude) &&
+                    Number(u.longitude) === Number(user.longitude)
+            );
+            const index = duplicates.findIndex(
+                (u) => u.session_id === user.session_id
+            );
+            const total = duplicates.length;
+
+            // ✅ Spread identical users in a small ring
+            if (total > 1) {
+                const radius = 0.000020;
+                const angle = (index / total) * 2 * Math.PI;
+                lat += Math.cos(angle) * radius;
+                lng += Math.sin(angle) * radius;
+            }
+
+            // Marker element
             const markerDiv = document.createElement("div");
             markerDiv.style.width = "14px";
             markerDiv.style.height = "14px";
@@ -122,75 +169,58 @@ export default function LiveMap({ users }) {
 
             const marker = new google.maps.marker.AdvancedMarkerElement({
                 map,
-                position: { lat: Number(user.latitude), lng: Number(user.longitude) },
+                position: { lat, lng },
                 title: `User ${user.session_id}`,
                 content: markerDiv,
             });
 
             const infoWindow = new google.maps.InfoWindow({
                 content: `
-          <div class="user-info-window">
-            <div class="info-header" style="font-weight:bold;color:${
+        <div class="user-info-window">
+          <div class="info-header" style="font-weight:bold;color:${
                     user.status === "inactive"
                         ? "#888"
                         : user.status === "emergency"
                             ? "#e63946"
                             : "#00cc66"
                 };">
-              ${
+            ${
                     user.status === "inactive"
                         ? "Inactive User"
                         : user.status === "emergency"
                             ? "Emergency User"
                             : "Active User"
                 }
-            </div>
-            <div class="info-body">
-              <div><b>Session:</b> ${user.session_id}</div>
-              <div><b>Status:</b> ${user.status}</div>
-              <div><b>Last seen:</b> ${new Date(
+          </div>
+          <div class="info-body">
+            <div><b>Session:</b> ${user.session_id}</div>
+            <div><b>Status:</b> ${user.status}</div>
+            <div><b>Last seen:</b> ${new Date(
                     user.last_seen
                 ).toLocaleTimeString()}</div>
-            </div>
           </div>
-        `,
+        </div>
+      `,
                 pixelOffset: new google.maps.Size(0, -15),
             });
 
-            // ✅ Ensure single popup behavior
             marker.addListener("click", () => {
                 if (openInfoWindowRef.current) openInfoWindowRef.current.close();
                 infoWindow.open(map, marker);
                 openInfoWindowRef.current = infoWindow;
             });
 
-            markersRef.current.push(marker);
+            // ✅ push and extend bounds
+            newMarkers.push(marker);
             bounds.extend(marker.position);
         });
 
-        // ✅ Only extend bounds for markers actually shown
-        let hasVisibleMarkers = false;
-
-        users.forEach((user) => {
-            if (!user.latitude || !user.longitude) return;
-            if (user.status === "inactive" && !showInactive) return;
-
-            hasVisibleMarkers = true; // we have at least one visible marker
-
-            let color = "#00cc66";
-            if (user.status === "emergency") color = "#ff3333";
-            else if (user.status === "inactive") color = "#888888";
-
-            // your marker creation code here...
-            // (AdvancedMarkerElement / InfoWindow / event listener)
-
-            bounds.extend({ lat: Number(user.latitude), lng: Number(user.longitude) });
-        });
-
-// ✅ only fitBounds if at least one marker is visible
-        if (hasVisibleMarkers) {
+        // Fit map to show all visible markers
+        if (newMarkers.length > 0) {
             map.fitBounds(bounds, 60);
         }
+
+        markersRef.current = newMarkers;
     }, [users, showInactive]);
 
     return (

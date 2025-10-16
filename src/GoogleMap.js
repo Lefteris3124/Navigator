@@ -34,15 +34,15 @@ export default function GoogleMap() {
                 zoomControlOptions: {
                     position: google.maps.ControlPosition.RIGHT_TOP,
                 },
-                restriction: {
-                    latLngBounds: {
-                        north: 38.87,
-                        south: 38.56,
-                        west: 20.61,
-                        east: 20.87,
-                    },
-                    strictBounds: false,
-                },
+                //restriction: {
+                    //latLngBounds: {
+                    //    north: 38.87,
+                     //   south: 38.56,
+                     //   west: 20.61,
+                     //   east: 20.87,
+                   // },
+                   // strictBounds: false,
+                //},
             });
 
             mapInstanceRef.current = map;
@@ -197,7 +197,7 @@ export default function GoogleMap() {
                     const targetZoom = Math.max(currentZoom, 15); // zoom in if too far
                     smoothZoomAndPan(map, { lat: loc.lat, lng: loc.lng }, targetZoom);
 
-                    // open info window after animation starts
+
                     setTimeout(() => {
                         infoWindow.open(map, marker);
                         openInfoWindow = infoWindow;

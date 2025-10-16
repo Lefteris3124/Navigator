@@ -809,7 +809,7 @@
     appearance: none;
     width: 20px;
     height: 20px;
-    border: 2px solid #30cfd0;
+    border: 2px solid #000000;
     border-radius: 5px;
     background-color: transparent;
     display: inline-block;
@@ -820,7 +820,7 @@
 
 .cyberpunk-checkbox:before {
     content: "";
-    background-color: #30cfd0;
+    background-color: #000000;
     display: block;
     position: absolute;
     top: 50%;
@@ -838,10 +838,12 @@
 
 .cyberpunk-checkbox-label {
     font-size: 14px;
-    color: #30cfd0;
+    color: #000000;
     cursor: pointer;
     user-select: none;
     display: flex;
     align-items: center;
     gap: 6px;
 }
+
+
