@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import { Send, Info, AlertTriangle, Cloud, Bell } from 'lucide-react';
+import { Send } from 'lucide-react';
 
 export default function NotificationForm({ users, onNotificationSent, draft }) {
-    const [targetType, setTargetType] = useState('all');
     const [type, setType] = useState('info');
     const [priority, setPriority] = useState('medium');
     const [title, setTitle] = useState('');
@@ -20,22 +19,51 @@ export default function NotificationForm({ users, onNotificationSent, draft }) {
         if (!title || !message) return;
         setIsSending(true);
 
-        const { error } = await supabase.from('notifications').insert([
-            {
-                title,
-                message,
-                type,
-                priority,
-                sent_by: 'Admin',
-            },
-        ]);
+        try {
+            // ✅ 1️⃣ Save notification to Supabase (for history)
+            const { error: insertError } = await supabase.from('notifications').insert([
+                {
+                    title,
+                    message,
+                    type,
+                    priority,
+                    sent_by: 'Admin',
+                },
+            ]);
 
-        if (!error) {
-            onNotificationSent();
+            if (insertError) throw insertError;
+
+            // ✅ 2️⃣ Trigger the Supabase Edge Function to push it to all subscribers
+            const response = await fetch(
+                `${process.env.REACT_APP_SUPABASE_URL}/functions/v1/send-notification`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${process.env.REACT_APP_SUPABASE_ANON_KEY}`,
+                    },
+                    body: JSON.stringify({
+                        title,
+                        message,
+                    }),
+                }
+            );
+
+            if (!response.ok) {
+                console.error("❌ Failed to trigger send-notification function:", await response.text());
+            } else {
+                console.log("✅ Push notification sent successfully!");
+            }
+
+            // ✅ 3️⃣ Notify parent and reset form
+            if (onNotificationSent) onNotificationSent();
             setTitle('');
             setMessage('');
+        } catch (err) {
+            console.error("❌ Error sending notification:", err);
+        } finally {
+            setIsSending(false);
         }
-        setIsSending(false);
     };
 
     return (

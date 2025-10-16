@@ -66,15 +66,40 @@ export default function AdminPanel() {
     // Send notification
     const handleSendNotification = async (notification) => {
         try {
-            const { error } = await supabase
+            // 1️⃣ Save the notification to the database (for history)
+            const { error: insertError } = await supabase
                 .from('notifications')
                 .insert([notification]);
 
-            if (error) throw error;
+            if (insertError) throw insertError;
 
+            // 2️⃣ Trigger the Supabase Edge Function to send it as a push notification
+            const response = await fetch(
+                `${process.env.REACT_APP_SUPABASE_URL}/functions/v1/send-notification`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${process.env.REACT_APP_SUPABASE_ANON_KEY}`,
+                    },
+                    body: JSON.stringify({
+                        title: notification.title || "Notification",
+                        message: notification.message || "No message provided",
+                    }),
+                }
+            );
+
+            if (!response.ok) {
+                const text = await response.text();
+                console.error("❌ Failed to call send-notification function:", text);
+            } else {
+                console.log("✅ Push notification sent successfully!");
+            }
+
+            // 3️⃣ Refresh local notifications list
             await fetchNotifications();
         } catch (error) {
-            console.error('Error sending notification:', error);
+            console.error("❌ Error sending notification:", error);
             throw error;
         }
     };

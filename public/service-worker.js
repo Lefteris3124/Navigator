@@ -2,11 +2,11 @@
 /* global clients */
 
 // 🧱 Versioned static cache
-const STATIC_CACHE = "boatzone-static-v1.3";
+const STATIC_CACHE = "boatzone-static-v1.4";
 
-// Optionally pre-cache immutable files (leave empty if you prefer runtime caching)
+// Optionally pre-cache immutable files
 const PRECACHE_ASSETS = [
-    // e.g. '/assets/index-abc123.js', '/assets/index-abc123.css'
+    // Example: "/index.html", "/assets/main.js"
 ];
 
 // ⚙️ INSTALL
@@ -28,7 +28,7 @@ self.addEventListener("activate", (event) => {
             await Promise.all(
                 keys.filter((k) => k !== STATIC_CACHE).map((k) => caches.delete(k))
             );
-            await self.clients.claim(); // Take control of pages immediately
+            await self.clients.claim(); // Take control immediately
         })()
     );
 });
@@ -68,7 +68,7 @@ self.addEventListener("fetch", (event) => {
         return;
     }
 
-    // 🧩 Cache-first for static hashed assets (images, CSS, JS)
+    // 🧩 Cache-first for static hashed assets
     const isStatic = /\.(?:js|css|png|jpg|jpeg|webp|gif|svg|ico|woff2?)$/i.test(
         url.pathname
     );
@@ -108,9 +108,14 @@ self.addEventListener("fetch", (event) => {
 
 // When the browser receives a push event from the server
 self.addEventListener("push", (event) => {
-    if (!event.data) return;
+    if (!event.data) {
+        console.warn("📭 Push event received but no data found");
+        return;
+    }
 
-    let data;
+    console.log("📬 Push event received:", event.data.text());
+
+    let data = {};
     try {
         data = event.data.json();
     } catch {
@@ -120,28 +125,37 @@ self.addEventListener("push", (event) => {
     const title = data.title || "Notification";
     const options = {
         body: data.body || "You have a new update.",
-        icon: "/icons/icon-192.png", // Adjust path if needed
-        badge: "/icons/icon-72.png", // Optional monochrome icon
-        data: data.url || "/", // Open this when clicked
+        icon: data.icon || "/icons/icon-192.png",
+        badge: data.badge || "/icons/icon-72.png",
+        data: { url: data.url || "/", timestamp: Date.now() },
     };
 
-    event.waitUntil(self.registration.showNotification(title, options));
+    event.waitUntil(
+        (async () => {
+            const permission = await self.registration.showNotification(title, options);
+            console.log("✅ Notification shown:", title);
+            return permission;
+        })().catch((err) => {
+            console.error("❌ Failed to show notification:", err);
+        })
+    );
 });
 
 // Handle notification clicks (focus/open the app)
 self.addEventListener("notificationclick", (event) => {
     event.notification.close();
+    const targetUrl = event.notification.data?.url || "/";
 
     event.waitUntil(
         clients
             .matchAll({ type: "window", includeUncontrolled: true })
             .then((clientList) => {
                 for (const client of clientList) {
-                    if ("focus" in client) return client.focus();
+                    if (client.url.includes(targetUrl) && "focus" in client) {
+                        return client.focus();
+                    }
                 }
-                if (clients.openWindow && event.notification.data) {
-                    return clients.openWindow(event.notification.data);
-                }
+                if (clients.openWindow) return clients.openWindow(targetUrl);
             })
     );
 });
