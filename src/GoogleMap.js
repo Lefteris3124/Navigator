@@ -14,7 +14,15 @@ export default function GoogleMap() {
     const sessionId = getOrCreateSessionId();
 
     useEffect(() => {
-       // console.log("🆔 Session ID:", sessionId);
+        // Disable scrolling on this page
+        document.body.style.overflow = "hidden";
+        document.documentElement.style.overflow = "hidden";
+
+        return () => {
+            // Restore scrolling when leaving this page
+            document.body.style.overflow = "";
+            document.documentElement.style.overflow = "";
+        };
     }, []);
 
 
@@ -66,6 +74,17 @@ export default function GoogleMap() {
                     name: "Vathiavali Beach",
                     lat: 38.76331974241167,
                     lng: 20.788981684254974,
+                    description: "Calm waters, great for swimming, has road access and beach bar.",
+                    type: "Beach",
+                    difficulty: "Easy",
+                    stay: "2 hours",
+                    color: "#0077ff",
+                    emoji: "🏖️",
+                },
+                {
+                    name: "Gerakas Beach",
+                    lat: 38.75719808045438,
+                    lng: 20.767915020459796,
                     description: "Calm waters, no road access, more private.",
                     type: "Beach",
                     difficulty: "Easy",
@@ -77,10 +96,10 @@ export default function GoogleMap() {
                     name: "Papanikolis Cave",
                     lat: 38.614138645126936,
                     lng: 20.762608511962913,
-                    description: "Calm waters, no road access, more private.",
+                    description: "Sea-cave best in calm seas, Cant use anchor inside",
                     type: "Beach",
                     difficulty: "Easy",
-                    stay: "2 hours",
+                    stay: "30 minutes",
                     color: "#c043ed",
                     emoji: "🕳️",
                 },
@@ -88,8 +107,8 @@ export default function GoogleMap() {
                     name: "Karnagio Restaurant",
                     lat: 38.665472594390145,
                     lng: 20.777818493575722,
-                    description: "Calm waters, no road access, more private.",
-                    type: "Beach",
+                    description: "Great lunch stop, beach next to it.",
+                    type: "Restaurant",
                     difficulty: "Easy",
                     stay: "2 hours",
                     color: "#ffa400",
@@ -212,7 +231,7 @@ export default function GoogleMap() {
                 });
             });
 
-            // ✅ User marker
+            //  User marker
             userMarkerRef.current = new Marker({
                 map,
                 icon: {
@@ -226,7 +245,7 @@ export default function GoogleMap() {
             });
         };
 
-        // ✅ Load script once
+        //  Load script once
         if (window.google && google.maps) {
             initMap();
         } else {
@@ -260,7 +279,7 @@ export default function GoogleMap() {
                 if (userMarkerRef.current)
                     userMarkerRef.current.setPosition({ lat, lng });
 
-                // ✅ update Supabase
+
                 updateActiveUser(sessionId, lat, lng);
             },
             (err) => setGpsError(err.message),

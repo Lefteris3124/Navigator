@@ -105,7 +105,7 @@ function LandingPage() {
             </header>
 
             <section className="relative pt-32 pb-20 px-6 overflow-hidden">
-                {/* 🎥 background video */}
+                {/*  background video */}
                 <video
                     autoPlay
                     muted
@@ -280,12 +280,14 @@ function LandingPage() {
                                 ))}
                             </div>
                             <p className="text-slate-700 mb-6 leading-relaxed">
-                                "As a first-time boater, Navigator made me feel confident and safe. The interface is so intuitive!"
+                                "Fantastic experience with the boat, impeccable service and beautiful routes!
+                                I highly recommend it for anyone who wants an unforgettable sea adventure!
+                                Theo is an incredible captain with great experience in boat handling!"
                             </p>
                             <div className="flex items-center gap-3">
                                 <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full"></div>
                                 <div>
-                                    <div className="font-semibold text-slate-900">Sarah M.</div>
+                                    <div className="font-semibold text-slate-900">Chris K.</div>
                                     <div className="text-sm text-slate-600">Family Vacation</div>
                                 </div>
                             </div>
@@ -297,13 +299,13 @@ function LandingPage() {
                                 ))}
                             </div>
                             <p className="text-slate-700 mb-6 leading-relaxed">
-                                "Found amazing hidden spots I would never have discovered on my own. This app is a game changer!"
+                                "Very nice experience. Theo is an excellent skipper, took us to Egremni and several beaches, explained everithing, stoped everywhere and made us feel welcomed on his boat! Thank you Diavlos!"
                             </p>
                             <div className="flex items-center gap-3">
                                 <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-full"></div>
                                 <div>
-                                    <div className="font-semibold text-slate-900">James R.</div>
-                                    <div className="text-sm text-slate-600">Weekend Explorer</div>
+                                    <div className="font-semibold text-slate-900">Alice c.</div>
+                                    <div className="text-sm text-slate-600">Family Vacation</div>
                                 </div>
                             </div>
                         </div>
@@ -314,13 +316,13 @@ function LandingPage() {
                                 ))}
                             </div>
                             <p className="text-slate-700 mb-6 leading-relaxed">
-                                "The safety features give me peace of mind. Weather alerts saved our trip once. Highly recommend!"
+                                "Great service from Diavlos Marine! The staff was super helpful and welcoming, the boat was in perfect condition, and we had an incredible time exploring Lefkada’s coast. Definitely a must-try experience"
                             </p>
                             <div className="flex items-center gap-3">
                                 <div className="w-12 h-12 bg-gradient-to-br from-violet-500 to-pink-500 rounded-full"></div>
                                 <div>
-                                    <div className="font-semibold text-slate-900">Emily T.</div>
-                                    <div className="text-sm text-slate-600">Adventure Seeker</div>
+                                    <div className="font-semibold text-slate-900">Ivana P.</div>
+                                    <div className="text-sm  text-slate-600">Adventure Seeker</div>
                                 </div>
                             </div>
                         </div>

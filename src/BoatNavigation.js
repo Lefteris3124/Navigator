@@ -340,13 +340,7 @@ export default function BoatNavigation() {
 
     return (
         <div
-            style={{
-                minHeight: "100vh",
-                height: "100vh",
-                overflow: "hidden", // ⛔ disables page scrolling
-                background: "linear-gradient(135deg,#0f172a,#0b3b8c,#0891b2)",
-                position: "relative"
-            }}
+            className="boat-navigation-page"
         >
 
 
@@ -430,44 +424,44 @@ export default function BoatNavigation() {
             </header>*/}
 
             {/* map */}
-            <div style={{ position: 'relative', height: 'calc(100vh - 80px)' }}>
+            <div className="map-wrapper">
 
                 {/* === SIDEBAR TOGGLE BUTTON === */}
-                <button
-                    onClick={() => setShowSidebar(true)}
-                    style={{
-                        position: "absolute",
-                        top: "20px",
-                        left: "20px",
-                        background: "rgba(255,255,255,0.85)",
-                        border: "none",
-                        borderRadius: "10px",
-                        padding: "8px 12px",
-                        cursor: "pointer",
-                        zIndex: 10000,
-                        boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                    }}
-                    title="Menu"
-                >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="22"
-                        height="22"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="black"
-                        strokeWidth="2.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                    >
-                        <line x1="3" y1="6" x2="21" y2="6" />
-                        <line x1="3" y1="12" x2="21" y2="12" />
-                        <line x1="3" y1="18" x2="21" y2="18" />
-                    </svg>
-                </button>
+                {/*<button*/}
+                {/*    onClick={() => setShowSidebar(true)}*/}
+                {/*    style={{*/}
+                {/*        position: "absolute",*/}
+                {/*        top: "20px",*/}
+                {/*        left: "20px",*/}
+                {/*        background: "rgba(255,255,255,0.85)",*/}
+                {/*        border: "none",*/}
+                {/*        borderRadius: "10px",*/}
+                {/*        padding: "8px 12px",*/}
+                {/*        cursor: "pointer",*/}
+                {/*        zIndex: 10000,*/}
+                {/*        boxShadow: "0 2px 6px rgba(0,0,0,0.2)",*/}
+                {/*        display: "flex",*/}
+                {/*        alignItems: "center",*/}
+                {/*        justifyContent: "center",*/}
+                {/*    }}*/}
+                {/*    title="Menu"*/}
+                {/*>*/}
+                {/*    <svg*/}
+                {/*        xmlns="http://www.w3.org/2000/svg"*/}
+                {/*        width="22"*/}
+                {/*        height="22"*/}
+                {/*        viewBox="0 0 24 24"*/}
+                {/*        fill="none"*/}
+                {/*        stroke="black"*/}
+                {/*        strokeWidth="2.5"*/}
+                {/*        strokeLinecap="round"*/}
+                {/*        strokeLinejoin="round"*/}
+                {/*    >*/}
+                {/*        <line x1="3" y1="6" x2="21" y2="6" />*/}
+                {/*        <line x1="3" y1="12" x2="21" y2="12" />*/}
+                {/*        <line x1="3" y1="18" x2="21" y2="18" />*/}
+                {/*    </svg>*/}
+                {/*</button>*/}
 
                 {/* === BACKDROP OVERLAY === */}
                 <div
