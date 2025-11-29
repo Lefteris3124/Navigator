@@ -3,7 +3,7 @@
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 40px;              /* adjust to what you prefer */
+    height: 50px;
     background: white;
     display: flex;
     justify-content: space-around;
@@ -47,3 +47,8 @@
     transform: scale(2);   /* shrink to 60% */
     transform-origin: center;
 }
+
+.navigation-card {
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 10px);
+}
+
