@@ -1,8 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Rectangle, Circle, Tooltip, Polygon } from 'react-leaflet';
-import { Badge } from "./components/ui/badge";
-import { Button } from "./components/ui/button";
-import {Anchor, ChevronRight, Navigation} from 'lucide-react';
+import {Navigation} from 'lucide-react';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { useNavigate } from "react-router-dom";
