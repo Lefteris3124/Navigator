@@ -27,7 +27,10 @@ export default function PlaceInfoWindow({ place, isOpen, onClose, onDirections }
     };
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-end sm:items-center sm:justify-center z-50 p-0 sm:p-4">
+        <div className="
+    fixed inset-0 bg-black bg-opacity-50 flex items-end sm:items-center sm:justify-center z-50 p-0 sm:p-4
+    translate-y-[-70px] sm:translate-y-0
+">
             <div className="bg-white rounded-t-3xl sm:rounded-2xl w-full sm:max-w-md max-h-[90vh] overflow-hidden shadow-2xl animate-slide-up">
 
                 {/* Photo Gallery */}
