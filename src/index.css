@@ -134,7 +134,7 @@ transition: all 0.3s ease;}
     padding: 25px 25px;
     gap: 20px;
 
-    border-radius: 20px; /* optional for smoother look */
+    border-radius: 20px;
     box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
 }
 
@@ -440,7 +440,7 @@ transition: all 0.3s ease;}
 
 .mylocation-btn {
     position: absolute;
-    bottom: 100px;
+    bottom: 55px;
     right: 5px;
     width: auto;
     padding: 8px 14px;
@@ -852,3 +852,15 @@ transition: all 0.3s ease;}
     padding-bottom: 40px;
 }
 
+
+.map-label {
+    background: rgba(0,0,0,0.55);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 13px;
+    white-space: nowrap;
+    backdrop-filter: blur(4px);
+    pointer-events: none;
+    font-family: sans-serif;
+}
