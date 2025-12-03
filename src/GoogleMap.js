@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { supabase } from "./lib/supabase";
 import { getOrCreateSessionId } from "./utils/session";
 import { updateActiveUser } from "./utils/activeUsers";
-import PlaceInfoWindow from "./PlaceInfoWindow"; // ← your React bottom sheet
+import PlaceInfoWindow from "./PlaceInfoWindow";
 
 export default function GoogleMap() {
     const mapRef = useRef(null);
@@ -50,6 +50,51 @@ export default function GoogleMap() {
                         east: 20.87,
                     },
                 },
+            });
+
+            // ---------------- DANGER ZONES (POLYGONS) ----------------
+            const dangerPolygons = [
+                {
+                    name: "Danger Zone 1",
+                    paths: [
+                        { lat: 38.67411996159772, lng: 20.80156716629596 },
+                        { lat: 38.673973379017156, lng: 20.802256493975964 },
+                        { lat: 38.67199884550189, lng: 20.801779208475484 },
+                        { lat: 38.672075844461816, lng: 20.80114953459237 },
+                    ],
+                },
+                {
+                    name: "Danger Zone 2",
+                    paths: [
+                        { lat: 38.67388546084317, lng: 20.806855514877295 },
+                        { lat: 38.67360904265412, lng: 20.807113880729094 },
+                        { lat: 38.67268515069093, lng: 20.804868330609764 },
+                        { lat: 38.673098472710144, lng: 20.804428276991963 },
+                    ]
+                },
+                {
+                    name: "Danger Zone 3",
+                    paths: [
+                        { lat: 38.685027585093884, lng: 20.75848377555084 },
+                        { lat: 38.685039391366885, lng: 20.75907598520059 },
+                        { lat: 38.684219393503795, lng: 20.75913270494921},
+                        { lat: 38.68420417336445, lng: 20.758780510685376 },
+                    ]
+                },
+
+            ];
+
+            dangerPolygons.forEach((zone) => {
+                new google.maps.Polygon({
+                    map,
+                    paths: zone.paths,
+                    strokeColor: "#FF0000",
+                    strokeOpacity: 0.9,
+                    strokeWeight: 2,
+                    fillColor: "#FF0000",
+                    fillOpacity: 0.25,
+                    clickable: false,
+                });
             });
 
             mapInstanceRef.current = map;
@@ -108,6 +153,43 @@ export default function GoogleMap() {
                     hours: "8AM - 11PM",
                     phone: "+30 26450 51071"
                 },
+                {
+                    name: "Danger Zone",
+                    lat: 38.68489066350608,
+                    lng: 20.7587940768079,
+                    description: "Don't go here.",
+                    type: "Danger",
+                    hours: "Never",
+                    photos:
+                    [
+                        "/custom_photos/danger!.png",
+                    ]
+                },
+                {
+                    name: "Danger Zone",
+                    lat: 38.67308093686554,
+                    lng: 20.801637698848392,
+                    description: "Don't go here.",
+                    type: "Danger",
+                    hours: "Never",
+                    photos:
+                        [
+                            "/custom_photos/danger!.png",
+                        ]
+                },
+                {
+                    name: "Danger Zone",
+                    lat: 38.6733498862909,
+                    lng: 20.805720517247167,
+                    description: "Don't go here.",
+                    type: "Danger",
+                    hours: "Never",
+                    photos:
+                        [
+                            "/custom_photos/danger!.png",
+                        ]
+                },
+
             ];
 
             // ---------------- ICON MAP ----------------
@@ -136,20 +218,16 @@ export default function GoogleMap() {
             }
 
 // Combined pan + smooth zoom function
-            function smoothZoomAndPan(map, targetLatLng, targetZoom = 15) {
-                map.panTo(targetLatLng); // smoother than setCenter
-                const currentZoom = map.getZoom();
-                smoothZoom(map, targetZoom, currentZoom);
-            }
-
             function smoothZoomToMarker(map, marker, targetZoom = 15) {
                 const position = marker.getPosition();
 
-                // Smooth pan
-                map.panTo(position);
-
-                // Smooth zoom handled natively by API
+                // Step 1: Zoom immediately
                 map.setZoom(targetZoom);
+
+                // Step 2: Pan AFTER zoom animation settles
+                setTimeout(() => {
+                    map.panTo(position);
+                }, 250); // 200–300ms feels best
             }
 
             // ---------------- LOAD PLACE DETAILS ----------------
@@ -328,13 +406,18 @@ export default function GoogleMap() {
     };
 
     return (
-        <div style={{ position: "relative", width: "100%", height: "100vh" }}>
+        <div style={{ position: "relative", width: "100%", height: "calc(100vh - 50px)" }}>
             <div ref={mapRef} style={{ width: "100%", height: "100%" }} />
 
             {/* User Location Button */}
-            <button className="cssbuttons-2 mylocation-btn" onClick={handleCenterOnUser}>
-                <span className="btn-content">📍 My Location</span>
-            </button>
+            {!isInfoOpen && (
+                <button
+                    className={`cssbuttons-2 mylocation-btn ${isInfoOpen ? "hidden" : ""}`}
+                    onClick={handleCenterOnUser}
+                >
+                    <span className="btn-content">📍 My Location</span>
+                </button>
+            )}
 
             {/* GPS Error */}
             {gpsError && (
