@@ -317,7 +317,7 @@ transition: all 0.3s ease;}
     position: absolute;
     top: 20px;
     right: 20px;
-    z-index: 999999; /* 👈 make sure this is high enough */
+    z-index: 999999;
     background: linear-gradient(to right, #8e2de2, #4a00e0);
     color: white;
     font-weight: 600;
@@ -440,7 +440,7 @@ transition: all 0.3s ease;}
 
 .mylocation-btn {
     position: absolute;
-    bottom: 115px;
+    bottom: 65px;
     right: 5px;
     width: auto;
     padding: 8px 14px;
